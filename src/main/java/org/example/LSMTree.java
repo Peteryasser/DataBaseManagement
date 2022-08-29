@@ -37,6 +37,11 @@ public class LSMTree {
         ///
         memTable.insert(key,value);
         memTableSize++;
+        //invalidate the row cache value if it is there
+        if(rowCache.containsKey(key)){
+            //assume removing the invalidation is done
+            rowCache.remove(key);
+        }
         if (memTableSize>=maxMemeTableSize){
             flushToDisk();
             memTableSize=0;
