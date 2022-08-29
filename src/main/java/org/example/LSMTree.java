@@ -19,6 +19,7 @@ public class LSMTree {
         this.memTable = new RedBlackTree<>();
         this.segmentNumber=1;
          this.nextSegmentID=String.valueOf(segmentNumber);
+         this.rowCache= new HashMap<>();
 
 
     }
@@ -33,8 +34,7 @@ public class LSMTree {
         }
     }
     void put(String key,String value) throws IOException {
-        ////func
-        ///
+        commitLogs(key, value);
         memTable.insert(key,value);
         memTableSize++;
         //invalidate the row cache value if it is there
@@ -46,6 +46,18 @@ public class LSMTree {
             flushToDisk();
             memTableSize=0;
             memTable.clear();
+        }
+    }
+    void commitLogs(String key,String value){
+        File myObj = new File(serverName+".txt");
+        try {
+            FileWriter myWriter = new FileWriter(serverName+".txt",true);
+            myWriter.write(key+" , "+value+'\n');
+            myWriter.close();
+            System.out.println("Successfully wrote to the file.");
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
         }
     }
 
